@@ -1,9 +1,143 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="UTF-8">
-  </head>
-  <body>
-    <h2>This is a sample Widget built using Zoho Extension toolkit.</h2>
-  </body>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>All Orders Under Design</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.5/css/jquery.dataTables.min.css">
+  <style>
+    body {
+      padding: 20px;
+    }
+    
+    .loading {
+      text-align: center;
+      padding: 20px;
+      font-size: 18px;
+      color: #007bff;
+    }
+    
+    #recordsTable {
+      margin-top: 20px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container-fluid">
+    <h2>Records List</h2>
+    <div id="loadingMessage" class="loading">Loading records...</div>
+    
+    <table id="recordsTable" class="display" style="width:100%; display:none;">
+      <thead>
+        <tr>
+          <th>Job No</th>
+          <th>Client Name</th>
+          <th>Order Date</th>
+          <th>Job Type</th>
+          <th>Requested Delivery Date</th>
+          <th>Design Status</th>
+          <th>Global Status</th>
+          <th>Job Stage</th>
+          <th>Industry</th>
+        </tr>
+      </thead>
+      <tbody id="recordsBody">
+      </tbody>
+    </table>
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
+  <script src="https://js.zohostatic.com/creator/widgets/version/1.0/widgetsdk-min.js"></script>
+  
+  <script>
+    let allRecords = [];
+
+    function initializeZoho() {
+      ZOHO.CREATOR.init()
+        .then(function () {
+          fetchAllRecords();
+        })
+        .catch(function (error) {
+          console.error("Initialization Error:", error);
+          document.getElementById('loadingMessage').textContent = 'Error initializing Zoho Creator';
+        });
+    }
+
+    function fetchAllRecords() {
+      allRecords = [];
+      let page = 1;
+      const pageSize = 200;
+
+      function fetchPage() {
+        const config = {
+          appName: "zoma",
+          reportName: "All_Orders_Design",
+          criteria: "(Design_Status == \"Under Design\")",
+          page: page,
+          pageSize: pageSize
+        };
+
+        ZOHO.CREATOR.API.getAllRecords(config)
+          .then(function (response) {
+            if (response.code === 3000 && response.data) {
+              allRecords = allRecords.concat(response.data);
+
+              if (response.data.length < pageSize) {
+                displayRecords();
+              } else {
+                page++;
+                fetchPage();
+              }
+            } else {
+              document.getElementById('loadingMessage').textContent = 'No records found';
+            }
+          })
+          .catch(function (error) {
+            document.getElementById('loadingMessage').textContent = 'Error fetching records';
+          });
+      }
+      fetchPage();
+    }
+
+    function displayRecords() {
+      document.getElementById('loadingMessage').style.display = 'none';
+      document.getElementById('recordsTable').style.display = 'table';
+
+      const tbody = document.getElementById('recordsBody');
+      tbody.innerHTML = '';
+
+      allRecords.forEach(record => {
+        console.log(record);
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${record.Job_No || 'N/A'}</td>
+          <td>${record.Client_Name.display_value || 'N/A'}</td>
+          <td>${record.Order_Date || 'N/A'}</td>
+          <td>${record.Job_Type || 'N/A'}</td>
+          <td>${record.Requested_Delivery_Date || 'N/A'}</td>
+          <td>${record.Design_Status || 'N/A'}</td>
+          <td>${record.Global_Status || 'N/A'}</td>
+          <td>${record.Job_Stage || 'N/A'}</td>
+          <td>${record.Industry.display_value || 'N/A'}</td>
+        `;
+        tbody.appendChild(row);
+      });
+
+      $('#recordsTable').DataTable({
+        pageLength: 25,
+        order: [[0, 'desc']]
+      });
+    }
+
+    // Initialize on page load
+    initializeZoho();
+  </script>
+
+</body>
+
 </html>
