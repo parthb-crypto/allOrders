@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>All Orders Under Design - Sample Data</title>
+
+  <!-- Bootstrap + DataTables CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.5/css/jquery.dataTables.min.css">
+
+  <style>
+    body {
+      padding: 20px;
+      background: #f8f9fa;
+    }
+
+    h2 {
+      color: #0d6efd;
+      margin-bottom: 20px;
+    }
+
+    #recordsTable {
+      margin-top: 20px;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 20px;
+      font-size: 18px;
+      color: #007bff;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container-fluid">
+    <h2>📋 All Orders Under Design (Sample Data)</h2>
+    <div id="loadingMessage" class="loading">Loading sample data...</div>
+
+    <table id="recordsTable" class="display table table-striped table-bordered" style="width:100%; display:none;">
+      <thead class="table-primary">
+        <tr>
+          <th>Job No</th>
+          <th>Client Name</th>
+          <th>Order Date</th>
+          <th>Job Type</th>
+          <th>Requested Delivery Date</th>
+          <th>Design Status</th>
+          <th>Global Status</th>
+          <th>Job Stage</th>
+          <th>Industry</th>
+        </tr>
+      </thead>
+      <tbody id="recordsBody"></tbody>
+    </table>
+  </div>
+
+  <!-- JS Libraries -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn..net/1.13.5/js/jquery.dataTables.min.js"></script>
+
+  <script>
+    // ✅ SAMPLE DATA
+    const allRecords = [
+      {
+        Job_No: "20250219_5218",
+        Client_Name: { display_value: "MOTOROLLS" },
+        Order_Date: "19-Feb-2025",
+        Job_Type: "Roll Door Fabrication",
+        Requested_Delivery_Date: "23-Feb-2025",
+        Design_Status: "Under Design",
+        Global_Status: "KP Approved",
+        Job_Stage: "Costing Stage",
+        Industry: { display_value: "Biogas Systems" }
+      },
+      {
+        Job_No: "20250220_5219",
+        Client_Name: { display_value: "GREEN ENERGY LTD" },
+        Order_Date: "20-Feb-2025",
+        Job_Type: "Twin Cone Fabrication",
+        Requested_Delivery_Date: "28-Feb-2025",
+        Design_Status: "Under Design",
+        Global_Status: "In Progress",
+        Job_Stage: "Design Stage",
+        Industry: { display_value: "Waste Management" }
+      },
+      {
+        Job_No: "20250222_5220",
+        Client_Name: { display_value: "BIOGAS INDIA" },
+        Order_Date: "22-Feb-2025",
+        Job_Type: "Dome Cover Fabrication",
+        Requested_Delivery_Date: "29-Feb-2025",
+        Design_Status: "Under Design",
+        Global_Status: "Pending Review",
+        Job_Stage: "Approval Stage",
+        Industry: { display_value: "Energy Solutions" }
+      },
+      {
+        Job_No: "20250223_5221",
+        Client_Name: { display_value: "SUNRISE SYSTEMS" },
+        Order_Date: "23-Feb-2025",
+        Job_Type: "Tank Liner Fabrication",
+        Requested_Delivery_Date: "02-Mar-2025",
+        Design_Status: "Under Design",
+        Global_Status: "KP Approved",
+        Job_Stage: "Design Stage",
+        Industry: { display_value: "Industrial Fabrication" }
+      }
+    ];
+
+    // ✅ Display records using DataTables
+    function displayRecords() {
+      const loadingMessage = document.getElementById('loadingMessage');
+      const table = document.getElementById('recordsTable');
+      const tbody = document.getElementById('recordsBody');
+
+      // Hide loading message
+      loadingMessage.style.display = 'none';
+      table.style.display = 'table';
+
+      // Fill table body
+      allRecords.forEach(record => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${record.Job_No}</td>
+          <td>${record.Client_Name.display_value}</td>
+          <td>${record.Order_Date}</td>
+          <td>${record.Job_Type}</td>
+          <td>${record.Requested_Delivery_Date}</td>
+          <td>${record.Design_Status}</td>
+          <td>${record.Global_Status}</td>
+          <td>${record.Job_Stage}</td>
+          <td>${record.Industry.display_value}</td>
+        `;
+        tbody.appendChild(row);
+      });
+
+      // Activate DataTable plugin
+      $('#recordsTable').DataTable({
+        pageLength: 10,
+        order: [[0, 'desc']]
+      });
+    }
+
+    // ✅ Simulate loading
+    setTimeout(displayRecords, 1000);
+  </script>
+
+</body>
+</html>
